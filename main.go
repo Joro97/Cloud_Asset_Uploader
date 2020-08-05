@@ -1,37 +1,30 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"net/http"
+
+	"CloudAssetUploader/config"
+	"CloudAssetUploader/constants"
+	"CloudAssetUploader/server"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/go-chi/chi"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
-	fmt.Println("Initial")
-
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String("eu-central-1"),
+		Region: aws.String(constants.REGION),
 	})
-	fmt.Printf("The sess is: %+v\n", sess)
-	fmt.Println("Region for the sess:", *sess.Config.Region)
-	svc := s3.New(sess)
+	env := config.NewEnv(sess)
 
-	result, err := svc.ListBuckets(nil)
+	r := chi.NewRouter()
+	r.Post("upload", server.RequestUploadURL(env))
+
+	log.Info().Msgf("Starting server on port %s", ":8090")
+	err = http.ListenAndServe(":8090", r)
 	if err != nil {
-		exitErrorf("Unable to list buckets, %v", err)
+		log.Error().Msgf("Could not start server: %s", err)
 	}
-
-	fmt.Println("Buckets:")
-	for _, b := range result.Buckets {
-		fmt.Printf("* %s created on %s\n",
-			aws.StringValue(b.Name), aws.TimeValue(b.CreationDate))
-	}
-}
-
-func exitErrorf(msg string, args ...interface{}) {
-	fmt.Fprintf(os.Stderr, msg+"\n", args...)
-	os.Exit(1)
 }
