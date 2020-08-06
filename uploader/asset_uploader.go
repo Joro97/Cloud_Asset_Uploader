@@ -25,7 +25,7 @@ type AwsAssetUploader struct {
 func (upld *AwsAssetUploader) GetSignedUploadURL(assetName string) (string, error) {
 	resp, _ := upld.S3Manager.PutObjectRequest(&s3.PutObjectInput{
 		Bucket: aws.String(constants.DEFAULT_BUCKET_NAME),
-		Key: aws.String(assetName),
+		Key:    aws.String(assetName),
 	})
 
 	url, err := resp.Presign(3 * time.Minute)

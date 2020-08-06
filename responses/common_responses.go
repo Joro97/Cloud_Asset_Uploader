@@ -7,7 +7,7 @@ import (
 
 type UploadUrlResponse struct {
 	Url string `json:"url,omitempty"`
-	Id string `json:"asset_id,omitempty"`
+	Id  string `json:"asset_id,omitempty"`
 }
 
 // WriteBadRequest writes StatusBadRequest response and the given message to the given ResponseWriter.
@@ -37,4 +37,3 @@ func WriteResourceNotFoundResponse(wr http.ResponseWriter, message string) {
 	resp, _ := json.Marshal(message)
 	wr.Write(resp)
 }
-

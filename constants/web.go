@@ -4,7 +4,7 @@ package constants
 const (
 	RequestMethodGet  = "GET"
 	RequestMethodPost = "POST"
-	RequestMethodPut = "PUT"
+	RequestMethodPut  = "PUT"
 	HeaderContentType = "Content-Type"
 	ApplicationJSON   = "application/json"
 )
@@ -16,6 +16,6 @@ const (
 
 // Asset upload status related constants.
 const (
-	AssetStatusCreated = "STATUS_CREATED"
+	AssetStatusCreated  = "STATUS_CREATED"
 	AssetStatusUploaded = "STATUS_UPLOADED"
 )

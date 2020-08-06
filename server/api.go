@@ -28,8 +28,9 @@ func RequestUploadURL(env *config.Env) http.HandlerFunc {
 
 		resp := &responses.UploadUrlResponse{
 			Url: url,
-			Id: id,
+			Id:  id,
 		}
+
 		responses.WriteOkResponse(wr, resp)
 	}
 }
@@ -37,7 +38,6 @@ func RequestUploadURL(env *config.Env) http.HandlerFunc {
 func GetDownloadURL(env *config.Env) http.HandlerFunc {
 	return func(wr http.ResponseWriter, r *http.Request) {
 		wr.Header().Set(constants.HeaderContentType, constants.ApplicationJSON)
-
 
 	}
 }

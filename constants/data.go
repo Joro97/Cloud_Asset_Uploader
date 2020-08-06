@@ -2,6 +2,6 @@ package constants
 
 // Database related constants.
 const (
-	AssetUploaderDatabaseName = "assets"
+	AssetUploaderDatabaseName   = "assets"
 	AssetUploaderCollectionName = "assetsInfo"
 )

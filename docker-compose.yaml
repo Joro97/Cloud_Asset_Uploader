@@ -1,0 +1,36 @@
+version: '3.8'
+volumes:
+  asset-uploader-state:
+
+services:
+  asset-uploader:
+    build: .
+    environment:
+      - MONGO_USERNAME=mongoadmin
+      - MONGO_PASSWORD=bigSecret
+      - MONGO_CONTAINER_NAME=asset-uploader-db
+      - MONGO_PORT=27017
+    volumes:
+      - ~/.aws/:/root/.aws:ro
+    ports:
+      - "8090:8090"
+    depends_on:
+      - asset-uploader-db
+
+  asset-uploader-db:
+    image: mongo:4.0.8
+    container_name: mongo-asset-uploader
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+      - MONGO_INITDB_ROOT_PASSWORD=bigSecret
+    volumes:
+      - asset-uploader-state:/data/db
+    ports:
+      - "12345:27017"
+    restart: always
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 7s

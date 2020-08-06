@@ -11,15 +11,16 @@ import (
 // The environment required for the application
 type Env struct {
 	AssetUploader uploader.Uploader
-	Store data.Store
+	Store         data.Store
 }
 
 //
-func NewEnv(client *session.Session) *Env {
+func NewEnv(client *session.Session, db data.Store) *Env {
 	return &Env{
 		AssetUploader: &uploader.AwsAssetUploader{
 			AWSClient: client,
 			S3Manager: s3.New(session.Must(client, nil)),
 		},
+		Store: db,
 	}
 }

@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"net/http"
 
 	"CloudAssetUploader/config"
 	"CloudAssetUploader/constants"
+	"CloudAssetUploader/data"
 	"CloudAssetUploader/server"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -17,7 +19,22 @@ func main() {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(constants.REGION),
 	})
-	env := config.NewEnv(sess)
+	if err != nil {
+		log.Fatal().Msgf("Could not connect to aws: %s", err)
+	}
+
+	connStr, err := data.BuildConnectionStringForDB()
+	if err != nil {
+		log.Fatal().Msgf("Could not build connection for MongoDB: %s", err)
+	}
+
+	db, err := data.NewDB(connStr)
+	if err != nil {
+		log.Fatal().Msgf("Could not connect to MongoDB: %s", err)
+	}
+	defer db.Client.Disconnect(context.Background())
+
+	env := config.NewEnv(sess, db)
 
 	r := chi.NewRouter()
 
