@@ -20,13 +20,28 @@ func RequestUploadURL(env *config.Env) http.HandlerFunc {
 			return
 		}
 
-		resp := struct {
-			Url string `json:"upload_url,omitempty"`
-			Id 	string  `json:"asset_id,omitempty"`
-		}{
+		resp := &responses.UploadUrlResponse{
 			Url: url,
 			Id: id,
 		}
 		responses.WriteOkResponse(wr, resp)
+	}
+}
+
+func GetDownloadURL(env *config.Env) http.HandlerFunc {
+	return func(wr http.ResponseWriter, r *http.Request) {
+		wr.Header().Set(constants.HeaderContentType, constants.ApplicationJSON)
+
+
+	}
+}
+
+func SetUploadStatus(env *config.Env) http.HandlerFunc {
+	return func(wr http.ResponseWriter, r *http.Request) {
+		wr.Header().Set(constants.HeaderContentType, constants.ApplicationJSON)
+
+		/*assetId := r.URL.Query().Get("id")
+		status := r.URL.Query().Get("status")*/
+
 	}
 }

@@ -28,11 +28,10 @@ func (upld *AwsAssetUploader) GetSignedUploadURL(assetName string) (string, stri
 		Key: aws.String(assetName),
 	})
 
-	//fmt.Printf("The output is: %+v\n", output)
-	//fmt.Printf("The response is: %+v\n", resp)
 	url, err := resp.Presign(3 * time.Minute)
 	if err != nil {
 		return "", "", err
 	}
+
 	return url, "", nil
 }

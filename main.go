@@ -20,7 +20,10 @@ func main() {
 	env := config.NewEnv(sess)
 
 	r := chi.NewRouter()
-	r.Post("/upload", server.RequestUploadURL(env))
+
+	r.Post("/assets", server.RequestUploadURL(env))
+	r.Put("/status", server.SetUploadStatus(env))
+	r.Get("/assets", server.GetDownloadURL(env))
 
 	log.Info().Msgf("Starting server on port %s", ":8090")
 	err = http.ListenAndServe(":8090", r)

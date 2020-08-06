@@ -5,6 +5,11 @@ import (
 	"net/http"
 )
 
+type UploadUrlResponse struct {
+	Url string `json:"url,omitempty"`
+	Id string `json:"asset_id,omitempty"`
+}
+
 // WriteBadRequest writes StatusBadRequest response and the given message to the given ResponseWriter.
 func WriteBadRequest(wr http.ResponseWriter, message string) {
 	wr.WriteHeader(http.StatusBadRequest)
