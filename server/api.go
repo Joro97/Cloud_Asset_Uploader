@@ -14,7 +14,13 @@ func RequestUploadURL(env *config.Env) http.HandlerFunc {
 
 		assetName := r.URL.Query().Get("name")
 
-		url, id, err := env.AssetUploader.GetSignedUploadURL(assetName)
+		url, err := env.AssetUploader.GetSignedUploadURL(assetName)
+		if err != nil {
+			responses.WriteInternalServerErrorResponse(wr, constants.InternalServerErrorMessage)
+			return
+		}
+
+		id, err := env.Store.AddNewAsset(assetName, url)
 		if err != nil {
 			responses.WriteInternalServerErrorResponse(wr, constants.InternalServerErrorMessage)
 			return

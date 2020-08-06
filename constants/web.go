@@ -9,7 +9,13 @@ const (
 	ApplicationJSON   = "application/json"
 )
 
-// Common errors
+// Common errors.
 const (
 	InternalServerErrorMessage = "An internal error has occurred. Please retry your request later."
+)
+
+// Asset upload status related constants.
+const (
+	AssetStatusCreated = "STATUS_CREATED"
+	AssetStatusUploaded = "STATUS_UPLOADED"
 )

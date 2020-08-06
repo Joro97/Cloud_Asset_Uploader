@@ -4,17 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"os"
 	"time"
 
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 type Store interface {
-
+	AddNewAsset(assetName, url string) (id string, err error)
 }
 
 type DB struct {

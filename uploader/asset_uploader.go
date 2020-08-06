@@ -12,7 +12,7 @@ import (
 
 //
 type Uploader interface {
-	GetSignedUploadURL(assetName string) (url string, id string, err error)
+	GetSignedUploadURL(assetName string) (url string, err error)
 }
 
 //
@@ -22,7 +22,7 @@ type AwsAssetUploader struct {
 }
 
 //
-func (upld *AwsAssetUploader) GetSignedUploadURL(assetName string) (string, string, error) {
+func (upld *AwsAssetUploader) GetSignedUploadURL(assetName string) (string, error) {
 	resp, _ := upld.S3Manager.PutObjectRequest(&s3.PutObjectInput{
 		Bucket: aws.String(constants.DEFAULT_BUCKET_NAME),
 		Key: aws.String(assetName),
@@ -30,8 +30,8 @@ func (upld *AwsAssetUploader) GetSignedUploadURL(assetName string) (string, stri
 
 	url, err := resp.Presign(3 * time.Minute)
 	if err != nil {
-		return "", "", err
+		return "", err
 	}
 
-	return url, "", nil
+	return url, nil
 }
