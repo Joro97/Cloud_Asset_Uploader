@@ -9,3 +9,7 @@ const (
 	ApplicationJSON   = "application/json"
 )
 
+// Common errors
+const (
+	InternalServerErrorMessage = "An internal error has occurred. Please retry your request later."
+)
