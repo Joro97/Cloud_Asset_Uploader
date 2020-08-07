@@ -13,11 +13,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
+//
 type Store interface {
 	AddNewAsset(assetName, url string) (id string, err error)
 	SetAssetStatus(assetId, status string) (*AssetInfo, error)
+	GetAsset(assetId string) (*AssetInfo, error)
 }
 
+//
 type DB struct {
 	Client *mongo.Client
 }

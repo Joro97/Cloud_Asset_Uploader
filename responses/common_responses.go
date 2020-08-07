@@ -6,13 +6,18 @@ import (
 )
 
 type UploadUrlResponse struct {
-	Url string `json:"url,omitempty"`
 	Id  string `json:"asset_id,omitempty"`
+	Url string `json:"url,omitempty"`
 }
 
 type StatusUpdateResponse struct {
-	Id string `json:"id"`
+	Id     string `json:"id"`
 	Status string `json:"string"`
+}
+
+type DownloadUrlResponse struct {
+	Id          string `json:"id"`
+	DownloadUrl string `json:"downloadUrl"`
 }
 
 // WriteBadRequest writes StatusBadRequest response and the given message to the given ResponseWriter.

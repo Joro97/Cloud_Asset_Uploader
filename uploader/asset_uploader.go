@@ -8,11 +8,13 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/rs/zerolog/log"
 )
 
 //
 type Uploader interface {
 	GetSignedUploadURL(assetName string) (url string, err error)
+	GetSignedDownloadURL(assetName string, timeout int) (url string, er error)
 }
 
 //
@@ -33,5 +35,20 @@ func (upld *AwsAssetUploader) GetSignedUploadURL(assetName string) (string, erro
 		return "", err
 	}
 
+	return url, nil
+}
+
+//
+func (upld *AwsAssetUploader) GetSignedDownloadURL(assetName string, timeout int) (string, error) {
+	resp, _ := upld.S3Manager.GetObjectRequest(&s3.GetObjectInput{
+		Bucket: aws.String(constants.DEFAULT_BUCKET_NAME),
+		Key:    aws.String(assetName),
+	})
+
+	url, err := resp.Presign(time.Duration(timeout) * time.Second)
+	if err != nil {
+		log.Error().Msgf("Could not create a download URL for given object. Err: %s", err)
+		return "", err
+	}
 	return url, nil
 }

@@ -2,6 +2,7 @@ package server
 
 import (
 	"net/http"
+	"strconv"
 
 	"CloudAssetUploader/config"
 	"CloudAssetUploader/constants"
@@ -38,6 +39,30 @@ func GetDownloadURL(env *config.Env) http.HandlerFunc {
 	return func(wr http.ResponseWriter, r *http.Request) {
 		wr.Header().Set(constants.HeaderContentType, constants.ApplicationJSON)
 
+		id := r.URL.Query().Get("id")
+		timeout := r.URL.Query().Get("timeout")
+		intTimeout := 60
+		if val, err := strconv.Atoi(timeout); err == nil {
+			intTimeout = val
+		}
+
+		asset, err := env.Store.GetAsset(id)
+		if err != nil {
+			responses.WriteInternalServerErrorResponse(wr, constants.InternalServerErrorMessage)
+			return
+		}
+
+		url, err := env.AssetUploader.GetSignedDownloadURL(asset.Name, intTimeout)
+		if err != nil {
+			responses.WriteInternalServerErrorResponse(wr, constants.InternalServerErrorMessage)
+			return
+		}
+
+		resp := &responses.DownloadUrlResponse{
+			Id:          id,
+			DownloadUrl: url,
+		}
+		responses.WriteOkResponse(wr, resp)
 	}
 }
 
