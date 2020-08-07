@@ -16,6 +16,6 @@ const (
 
 // Asset upload status related constants.
 const (
-	AssetStatusCreated  = "STATUS_CREATED"
-	AssetStatusUploaded = "STATUS_UPLOADED"
+	AssetStatusCreated  = "CREATED"
+	AssetStatusUploaded = "UPLOADED"
 )

@@ -15,6 +15,7 @@ import (
 
 type Store interface {
 	AddNewAsset(assetName, url string) (id string, err error)
+	SetAssetStatus(assetId, status string) (*AssetInfo, error)
 }
 
 type DB struct {

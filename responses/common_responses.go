@@ -10,6 +10,11 @@ type UploadUrlResponse struct {
 	Id  string `json:"asset_id,omitempty"`
 }
 
+type StatusUpdateResponse struct {
+	Id string `json:"id"`
+	Status string `json:"string"`
+}
+
 // WriteBadRequest writes StatusBadRequest response and the given message to the given ResponseWriter.
 func WriteBadRequest(wr http.ResponseWriter, message string) {
 	wr.WriteHeader(http.StatusBadRequest)
