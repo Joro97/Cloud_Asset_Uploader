@@ -11,12 +11,12 @@ type UploadUrlResponse struct {
 }
 
 type StatusUpdateResponse struct {
-	Id     string `json:"id"`
-	Status string `json:"string"`
+	Id     string `json:"id,omitempty"`
+	Status string `json:"status"`
 }
 
 type DownloadUrlResponse struct {
-	Id          string `json:"id"`
+	Id          string `json:"id,omitempty"`
 	DownloadUrl string `json:"downloadUrl"`
 }
 
