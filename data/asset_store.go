@@ -42,7 +42,6 @@ func (err *ErrorInvalidStatus) Error() string {
 }
 
 type ErrorDownloadForNotUploadedAsset struct {
-
 }
 
 func (err *ErrorDownloadForNotUploadedAsset) Error() string {
