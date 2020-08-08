@@ -7,6 +7,7 @@ const (
 	RequestMethodPut  = "PUT"
 	HeaderContentType = "Content-Type"
 	ApplicationJSON   = "application/json"
+	DefaultServerPort = ":8090"
 )
 
 // Common error API responses.

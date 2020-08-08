@@ -30,8 +30,8 @@ func RequestUploadURL(env *config.Env) http.HandlerFunc {
 		}
 
 		resp := &responses.UploadUrlResponse{
-			Url: url,
 			Id:  id,
+			Url: url,
 		}
 		responses.WriteOkResponse(wr, resp)
 	}

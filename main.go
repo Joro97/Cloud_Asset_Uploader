@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"net/http"
+	"os"
 
 	"CloudAssetUploader/config"
 	"CloudAssetUploader/constants"
@@ -42,8 +43,12 @@ func main() {
 	r.Put("/status", server.SetUploadStatus(env))
 	r.Get("/assets", server.GetDownloadURL(env))
 
-	log.Info().Msgf("Starting server on port %s", ":8090")
-	err = http.ListenAndServe(":8090", r)
+	srvPort := os.Getenv("SERVER_PORT")
+	if srvPort == "" {
+		srvPort = constants.DefaultServerPort
+	}
+	log.Info().Msgf("Starting server on port %s", srvPort)
+	err = http.ListenAndServe(srvPort, r)
 	if err != nil {
 		log.Error().Msgf("Could not start server: %s", err)
 	}
