@@ -8,6 +8,8 @@ const (
 	HeaderContentType = "Content-Type"
 	ApplicationJSON   = "application/json"
 	DefaultServerPort = ":8090"
+	AssetsURL = "/assets"
+	StatusURL = "/status"
 )
 
 // Common error API responses.

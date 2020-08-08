@@ -1,6 +1,3 @@
-# Sample test files for the service
-.txt
-
 # Common IDEs
 .idea
 
@@ -15,6 +12,7 @@
 *.test
 
 # Output of the go coverage tool, specifically when used with LiteIDE
+cover.html
 *.out
 
 # Dependency directories (remove the comment below to include it)
