@@ -8,6 +8,7 @@ import (
 	"CloudAssetUploader/constants"
 	"CloudAssetUploader/data"
 	"CloudAssetUploader/responses"
+	"CloudAssetUploader/uploader"
 )
 
 func RequestUploadURL(env *config.Env) http.HandlerFunc {
@@ -18,7 +19,12 @@ func RequestUploadURL(env *config.Env) http.HandlerFunc {
 
 		url, err := env.AssetUploader.GetSignedUploadURL(assetName)
 		if err != nil {
-			responses.WriteInternalServerErrorResponse(wr, constants.InternalServerErrorMessage)
+			switch err.(type) {
+			case *uploader.ErrorInvalidAssetName:
+				responses.WriteBadRequest(wr, err.Error())
+			default:
+				responses.WriteInternalServerErrorResponse(wr, constants.InternalServerErrorMessage)
+			}
 			return
 		}
 

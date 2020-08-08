@@ -1,6 +1,7 @@
 package uploader
 
 import (
+	"fmt"
 	"time"
 
 	"CloudAssetUploader/constants"
@@ -23,8 +24,22 @@ type AwsAssetUploader struct {
 	S3Manager *s3.S3
 }
 
+type ErrorInvalidAssetName struct {
+	Name string
+}
+
+func (err *ErrorInvalidAssetName) Error() string {
+	return fmt.Sprintf("The asset name should be between %d and %d characters long. Current name: %s",
+		constants.AssetMinNameLength, constants.AssetMaxNameLength, err.Name)
+}
+
 //
 func (upld *AwsAssetUploader) GetSignedUploadURL(assetName string) (string, error) {
+	assetName, err := validateAssetName(assetName)
+	if err != nil {
+		return "", err
+	}
+
 	resp, _ := upld.S3Manager.PutObjectRequest(&s3.PutObjectInput{
 		Bucket: aws.String(constants.DEFAULT_BUCKET_NAME),
 		Key:    aws.String(assetName),
@@ -51,4 +66,11 @@ func (upld *AwsAssetUploader) GetSignedDownloadURL(assetName string, timeout int
 		return "", err
 	}
 	return url, nil
+}
+
+func validateAssetName(name string) (string, error) {
+	if len(name) < constants.AssetMinNameLength || len(name) > constants.AssetMaxNameLength {
+		return name, &ErrorInvalidAssetName{Name: name}
+	}
+	return name, nil
 }

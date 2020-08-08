@@ -12,7 +12,7 @@ const (
 	StatusURL = "/status"
 )
 
-// Common error API responses.
+// Common error messages.
 const (
 	InternalServerErrorMessage = "An internal error has occurred. Please retry your request later."
 )
@@ -24,8 +24,10 @@ const (
 	UnsetStatusMessage   = "Asset cannot be downloaded if its status is not set to UPLOADED."
 )
 
-// Asset upload status related constants.
+// Asset related constants.
 const (
 	AssetStatusCreated  = "CREATED"
 	AssetStatusUploaded = "UPLOADED"
+	AssetMinNameLength = 1
+	AssetMaxNameLength = 37
 )
