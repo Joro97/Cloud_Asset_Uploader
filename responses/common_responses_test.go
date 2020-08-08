@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	MockId = "c0703c92-9161-4c6a-947a-77519bedaceb"
+	MockId  = "c0703c92-9161-4c6a-947a-77519bedaceb"
 	MockUrl = "aws.signed.url.should.be.here"
 )
 

@@ -8,8 +8,8 @@ const (
 	HeaderContentType = "Content-Type"
 	ApplicationJSON   = "application/json"
 	DefaultServerPort = ":8090"
-	AssetsURL = "/assets"
-	StatusURL = "/status"
+	AssetsURL         = "/assets"
+	StatusURL         = "/status"
 )
 
 // Common error messages.
@@ -28,6 +28,6 @@ const (
 const (
 	AssetStatusCreated  = "CREATED"
 	AssetStatusUploaded = "UPLOADED"
-	AssetMinNameLength = 1
-	AssetMaxNameLength = 37
+	AssetMinNameLength  = 1
+	AssetMaxNameLength  = 37
 )

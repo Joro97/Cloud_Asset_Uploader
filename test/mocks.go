@@ -5,17 +5,9 @@ import (
 	"CloudAssetUploader/data"
 )
 
-const (
-	MockID = "c0703c92-9161-4c6a-947a-77519bedaceb"
-	MockNonExistentId = "583195a1-10ee-4608-9cc8-00fb0a32feb0"
-	MockURL = "aws.signed.url.should.be.here"
-	MockAssetName = "Theseus"
-	MockInvalidAssetName = "ThisIsTooLongNameForAnS3AssetAndShouldThrowAnError"
-)
-
 //
 type MockDb struct {
-	Err error
+	Err                   error
 	ShouldStatusBeCreated bool
 }
 
@@ -25,15 +17,15 @@ type MockUploader struct {
 }
 
 func (m *MockDb) AddNewAsset(assetName, url string) (id string, err error) {
-	return MockID, m.Err
+	return constants.MockID, m.Err
 }
 
 func (m *MockDb) SetAssetStatus(assetId, status string) (*data.AssetInfo, error) {
 	if m.Err == nil {
 		return &data.AssetInfo{
 			Id:           assetId,
-			Name:         MockAssetName,
-			Url:          MockURL,
+			Name:         constants.MockAssetName,
+			Url:          constants.MockURL,
 			UploadStatus: status,
 		}, nil
 	}
@@ -44,24 +36,24 @@ func (m *MockDb) GetAsset(assetId string) (*data.AssetInfo, error) {
 	if !m.ShouldStatusBeCreated {
 		return &data.AssetInfo{
 			Id:           assetId,
-			Name:         MockAssetName,
-			Url:          MockURL,
+			Name:         constants.MockAssetName,
+			Url:          constants.MockURL,
 			UploadStatus: constants.AssetStatusUploaded,
 		}, m.Err
 	}
 
 	return &data.AssetInfo{
 		Id:           assetId,
-		Name:         MockAssetName,
-		Url:          MockURL,
+		Name:         constants.MockAssetName,
+		Url:          constants.MockURL,
 		UploadStatus: constants.AssetStatusCreated,
 	}, m.Err
 }
 
 func (m *MockUploader) GetSignedUploadURL(assetName string) (url string, err error) {
-	return MockURL, m.Err
+	return constants.MockURL, m.Err
 }
 
 func (m *MockUploader) GetSignedDownloadURL(assetName string, timeout int) (url string, er error) {
-	return MockURL, m.Err
+	return constants.MockURL, m.Err
 }
