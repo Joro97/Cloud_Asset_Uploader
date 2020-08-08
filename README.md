@@ -5,3 +5,5 @@ Tasks TODO:
 2. Proper error handling
 3. Validation of requests
 4. Think about it being stateless
+5. Add very basic CI/CD
+6. Add documentation

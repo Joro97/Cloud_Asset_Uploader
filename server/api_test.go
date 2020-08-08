@@ -248,3 +248,120 @@ func TestGetDownloadURLWithOkRequestShouldReturnProperResponse(t *testing.T) {
 	assert.Equal(t, test.MockID, resp.Id)
 	assert.Equal(t, test.MockURL, resp.DownloadUrl)
 }
+
+func TestGetDownloadURLWithOkTimeoutShouldReturnProperResponse(t *testing.T) {
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest(constants.RequestMethodGet,
+		fmt.Sprintf("%s?id=%s&timeout=11", constants.AssetsURL, test.MockID), nil)
+	require.NoError(t, err)
+
+	db := &test.MockDb{}
+	upd := &test.MockUploader{}
+	env := &config.Env{AssetUploader: upd, Store: db}
+
+	GetDownloadURL(env).ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusOK, rec.Code)
+	buf, err := ioutil.ReadAll(rec.Body)
+	require.NoError(t, err)
+
+	contentType := rec.Header().Get(constants.HeaderContentType)
+	assert.Equal(t, constants.ApplicationJSON, contentType)
+
+	resp := &responses.DownloadUrlResponse{}
+	assert.NoError(t, json.Unmarshal(buf, resp))
+	assert.Equal(t, test.MockID, resp.Id)
+	assert.Equal(t, test.MockURL, resp.DownloadUrl)
+}
+
+func TestGetDownloadURLWithTooLargeTimeoutAndMissingAssetIDShouldReturnProperResponse(t *testing.T) {
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest(constants.RequestMethodGet,
+		fmt.Sprintf("%s?id=%s&timeout=111013", constants.AssetsURL, test.MockID), nil)
+	require.NoError(t, err)
+
+	db := &test.MockDb{Err: &data.ErrorNoAssetFound{}}
+	upd := &test.MockUploader{}
+	env := &config.Env{AssetUploader: upd, Store: db}
+
+	GetDownloadURL(env).ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusNotFound, rec.Code)
+	_, err = ioutil.ReadAll(rec.Body)
+	require.NoError(t, err)
+
+	contentType := rec.Header().Get(constants.HeaderContentType)
+	assert.Equal(t, constants.ApplicationJSON, contentType)
+}
+
+func TestGetDownloadURLWithInternalErrorInGetAssetShouldReturnProperResponse(t *testing.T) {
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest(constants.RequestMethodGet,
+		fmt.Sprintf("%s?id=%s&timeout=111013", constants.AssetsURL, test.MockID), nil)
+	require.NoError(t, err)
+
+	db := &test.MockDb{Err: errors.New("")}
+	upd := &test.MockUploader{}
+	env := &config.Env{AssetUploader: upd, Store: db}
+
+	GetDownloadURL(env).ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
+	buf, err := ioutil.ReadAll(rec.Body)
+	require.NoError(t, err)
+
+	contentType := rec.Header().Get(constants.HeaderContentType)
+	assert.Equal(t, constants.ApplicationJSON, contentType)
+
+	respMsg := ""
+	require.NoError(t, json.Unmarshal(buf, &respMsg))
+	assert.Equal(t, constants.InternalServerErrorMessage, respMsg)
+}
+
+func TestGetDownloadURLWithAssetThatHasStatusCreatedShouldReturnProperResponse(t *testing.T) {
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest(constants.RequestMethodGet,
+		fmt.Sprintf("%s?id=%s&timeout=11", constants.AssetsURL, test.MockID), nil)
+	require.NoError(t, err)
+
+	db := &test.MockDb{ShouldStatusBeCreated: true}
+	upd := &test.MockUploader{}
+	env := &config.Env{AssetUploader: upd, Store: db}
+
+	GetDownloadURL(env).ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+	buf, err := ioutil.ReadAll(rec.Body)
+	require.NoError(t, err)
+
+	contentType := rec.Header().Get(constants.HeaderContentType)
+	assert.Equal(t, constants.ApplicationJSON, contentType)
+
+	respMsg := ""
+	require.NoError(t, json.Unmarshal(buf, &respMsg))
+	assert.Equal(t, constants.UnsetStatusMessage, respMsg)
+}
+
+func TestGetDownloadURLWithInternalErrorInGetSignedDownloadURLShouldReturnProperResponse(t *testing.T) {
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest(constants.RequestMethodGet,
+		fmt.Sprintf("%s?id=%s&timeout=111013", constants.AssetsURL, test.MockID), nil)
+	require.NoError(t, err)
+
+	db := &test.MockDb{}
+	upd := &test.MockUploader{Err: errors.New("")}
+	env := &config.Env{AssetUploader: upd, Store: db}
+
+	GetDownloadURL(env).ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
+	buf, err := ioutil.ReadAll(rec.Body)
+	require.NoError(t, err)
+
+	contentType := rec.Header().Get(constants.HeaderContentType)
+	assert.Equal(t, constants.ApplicationJSON, contentType)
+
+	respMsg := ""
+	require.NoError(t, json.Unmarshal(buf, &respMsg))
+	assert.Equal(t, constants.InternalServerErrorMessage, respMsg)
+}

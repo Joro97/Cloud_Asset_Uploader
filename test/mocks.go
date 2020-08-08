@@ -16,6 +16,7 @@ const (
 //
 type MockDb struct {
 	Err error
+	ShouldStatusBeCreated bool
 }
 
 //
@@ -40,11 +41,20 @@ func (m *MockDb) SetAssetStatus(assetId, status string) (*data.AssetInfo, error)
 }
 
 func (m *MockDb) GetAsset(assetId string) (*data.AssetInfo, error) {
+	if !m.ShouldStatusBeCreated {
+		return &data.AssetInfo{
+			Id:           assetId,
+			Name:         MockAssetName,
+			Url:          MockURL,
+			UploadStatus: constants.AssetStatusUploaded,
+		}, m.Err
+	}
+
 	return &data.AssetInfo{
 		Id:           assetId,
 		Name:         MockAssetName,
 		Url:          MockURL,
-		UploadStatus: constants.AssetStatusUploaded,
+		UploadStatus: constants.AssetStatusCreated,
 	}, m.Err
 }
 
