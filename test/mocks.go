@@ -53,6 +53,10 @@ func (m *MockDb) GetAsset(assetID string) (*data.AssetInfo, error) {
 	}, m.Err
 }
 
+func (m *MockUploader) SetupBucket() error {
+	return nil
+}
+
 // GetSignedUploadURL is a mock implementation that returns a sample ID and an URL.
 func (m *MockUploader) GetSignedUploadURL(timeout string) (awsName, url string, err error) {
 	return constants.MockID, constants.MockURL, m.Err

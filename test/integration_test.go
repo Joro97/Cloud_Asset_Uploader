@@ -60,6 +60,10 @@ func setUp() {
 	}
 
 	env = config.NewEnv(sess, db)
+	err = env.AssetUploader.SetupBucket()
+	if err != nil {
+		log.Fatal().Msgf("Could not setup AWS bucket env. Err: %s", err)
+	}
 }
 
 func setLocalhostEnvVars() {

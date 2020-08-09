@@ -41,6 +41,11 @@ func setUp() {
 		AWSClient: sess,
 		S3Manager: s3.New(session.Must(sess, nil)),
 	}
+
+	err = upld.SetupBucket()
+	if err != nil {
+		log.Fatal().Msgf("Could not setup AWS bucket env. Err: %s", err)
+	}
 }
 
 func TestIntegrationGetSignedUploadURLShouldReturnValidUUID(t *testing.T) {
