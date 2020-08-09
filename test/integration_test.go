@@ -1,7 +1,7 @@
 package test
 
 import (
-	"context"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -54,7 +54,6 @@ func setUp() {
 	if err != nil {
 		log.Fatal().Msgf("Could not connect to MongoDB: %s", err)
 	}
-	defer db.Client.Disconnect(context.Background())
 
 	env = config.NewEnv(sess, db)
 }
@@ -89,9 +88,8 @@ func TestAPIFlows(t *testing.T) {
 	// Now make a PUT request to upload an asset to AWS
 	upldFile, err := getUploadBytes()
 	require.NoError(t, err)
-	//body, err := json.Marshal(buf)
 
-	awsUploadReq, err := http.NewRequest(constants.RequestMethodPut, uploadResp.URL, upldFile)
+	awsUploadReq, err := http.NewRequest(constants.RequestMethodPut, uploadResp.URL, bytes.NewBuffer(upldFile))
 	require.NoError(t, err)
 
 	awsResp, err := httpClient.Do(awsUploadReq)
@@ -138,9 +136,7 @@ func TestAPIFlows(t *testing.T) {
 	// Actually download the file from AWS
 	awsDownloadResp, err := http.Get(downloadResp.DownloadURL)
 	require.NoError(t, err)
-
-	// TODO: Compare this to actual uploaded file!!
-	fmt.Println(awsDownloadResp)
+	assert.Equal(t, http.StatusOK, awsDownloadResp.StatusCode)
 }
 
 func validateContentType(t *testing.T, rec *httptest.ResponseRecorder) {
@@ -148,7 +144,7 @@ func validateContentType(t *testing.T, rec *httptest.ResponseRecorder) {
 	assert.Equal(t, constants.ApplicationJSON, contentType)
 }
 
-func getUploadBytes() (*os.File, error) {
+func getUploadBytes() ([]byte, error) {
 	workDir, err := os.Getwd()
 	if err != nil {
 		return nil, err
@@ -159,5 +155,6 @@ func getUploadBytes() (*os.File, error) {
 		return nil, err
 	}
 
-	return f, err
+	buf, err := ioutil.ReadAll(f)
+	return buf, err
 }
