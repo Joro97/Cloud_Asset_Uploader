@@ -23,8 +23,7 @@ func (m *MockDb) AddNewAsset(assetName, url string) (id string, err error) {
 func (m *MockDb) SetAssetStatus(assetId, status string) (*data.AssetInfo, error) {
 	if m.Err == nil {
 		return &data.AssetInfo{
-			Id:           assetId,
-			Name:         constants.MockAssetName,
+			Name:         assetId,
 			Url:          constants.MockURL,
 			UploadStatus: status,
 		}, nil
@@ -35,23 +34,21 @@ func (m *MockDb) SetAssetStatus(assetId, status string) (*data.AssetInfo, error)
 func (m *MockDb) GetAsset(assetId string) (*data.AssetInfo, error) {
 	if !m.ShouldStatusBeCreated {
 		return &data.AssetInfo{
-			Id:           assetId,
-			Name:         constants.MockAssetName,
+			Name:         assetId,
 			Url:          constants.MockURL,
 			UploadStatus: constants.AssetStatusUploaded,
 		}, m.Err
 	}
 
 	return &data.AssetInfo{
-		Id:           assetId,
-		Name:         constants.MockAssetName,
+		Name:         assetId,
 		Url:          constants.MockURL,
 		UploadStatus: constants.AssetStatusCreated,
 	}, m.Err
 }
 
-func (m *MockUploader) GetSignedUploadURL(assetName string) (url string, err error) {
-	return constants.MockURL, m.Err
+func (m *MockUploader) GetSignedUploadURL() (awsName, url string, err error) {
+	return constants.MockID, constants.MockURL, m.Err
 }
 
 func (m *MockUploader) GetSignedDownloadURL(assetName string, timeout int) (url string, er error) {

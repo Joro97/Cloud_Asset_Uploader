@@ -7,7 +7,6 @@ import (
 
 	"CloudAssetUploader/constants"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -16,8 +15,7 @@ import (
 
 //
 type AssetInfo struct {
-	Id           string `bson:"id,omitempty"`
-	Name         string `bson:"name,omitempty"`
+	Name         string `bson:"awsName,omitempty"`
 	Url          string `bson:"url,omitempty"`
 	UploadStatus string `bson:"uploadStatus,omitempty"`
 }
@@ -50,9 +48,7 @@ func (err *ErrorDownloadForNotUploadedAsset) Error() string {
 
 //
 func (db *DB) AddNewAsset(assetName, url string) (string, error) {
-	id := uuid.New().String()
 	assetInfo := &AssetInfo{
-		Id:           id,
 		Name:         assetName,
 		Url:          url,
 		UploadStatus: constants.AssetStatusCreated,
@@ -64,13 +60,13 @@ func (db *DB) AddNewAsset(assetName, url string) (string, error) {
 		return "", err
 	}
 
-	return id, nil
+	return assetName, nil
 }
 
 //
-func (db *DB) SetAssetStatus(assetId, status string) (*AssetInfo, error) {
-	status = normalizeStatusString(status)
-	if status == "" {
+func (db *DB) SetAssetStatus(awsName, status string) (*AssetInfo, error) {
+	err := validateStatus(status)
+	if err != nil {
 		return nil, &ErrorInvalidStatus{Status: status}
 	}
 
@@ -78,10 +74,10 @@ func (db *DB) SetAssetStatus(assetId, status string) (*AssetInfo, error) {
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 
 	asset := &AssetInfo{}
-	err := assetInfoCollection.FindOneAndUpdate(
+	err = assetInfoCollection.FindOneAndUpdate(
 		context.Background(),
 		bson.M{
-			"id": assetId,
+			"awsName": awsName,
 		},
 		bson.D{
 			{"$set", bson.D{{"uploadStatus", status}}},
@@ -89,7 +85,7 @@ func (db *DB) SetAssetStatus(assetId, status string) (*AssetInfo, error) {
 	).Decode(asset)
 
 	if err == mongo.ErrNoDocuments {
-		return nil, &ErrorNoAssetFound{Id: assetId}
+		return nil, &ErrorNoAssetFound{Id: awsName}
 	}
 
 	return asset, err
@@ -103,7 +99,7 @@ func (db *DB) GetAsset(assetId string) (*AssetInfo, error) {
 	err := assetInfoCollection.FindOne(
 		context.Background(),
 		bson.M{
-			"id": assetId,
+			"awsName": assetId,
 		}).Decode(asset)
 
 	if err == mongo.ErrNoDocuments {
@@ -117,9 +113,9 @@ func (db *DB) GetAsset(assetId string) (*AssetInfo, error) {
 	return asset, nil
 }
 
-func normalizeStatusString(status string) string {
+func validateStatus(status string) error {
 	if lower := strings.TrimSpace(strings.ToLower(status)); lower == "uploaded" {
-		return constants.AssetStatusUploaded
+		return nil
 	}
-	return ""
+	return &ErrorInvalidStatus{Status: status}
 }

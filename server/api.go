@@ -15,9 +15,7 @@ func RequestUploadURL(env *config.Env) http.HandlerFunc {
 	return func(wr http.ResponseWriter, r *http.Request) {
 		wr.Header().Set(constants.HeaderContentType, constants.ApplicationJSON)
 
-		assetName := r.URL.Query().Get("name")
-
-		url, err := env.AssetUploader.GetSignedUploadURL(assetName)
+		awsName, url, err := env.AssetUploader.GetSignedUploadURL()
 		if err != nil {
 			switch err.(type) {
 			case *uploader.ErrorInvalidAssetName:
@@ -28,7 +26,7 @@ func RequestUploadURL(env *config.Env) http.HandlerFunc {
 			return
 		}
 
-		id, err := env.Store.AddNewAsset(assetName, url)
+		id, err := env.Store.AddNewAsset(awsName, url)
 		if err != nil {
 			responses.WriteInternalServerErrorResponse(wr, constants.InternalServerErrorMessage)
 			return
@@ -63,7 +61,7 @@ func SetUploadStatus(env *config.Env) http.HandlerFunc {
 		}
 
 		resp := responses.StatusUpdateResponse{
-			Id:     asset.Id,
+			Id:     asset.Name,
 			Status: asset.UploadStatus,
 		}
 		responses.WriteOkResponse(wr, resp)

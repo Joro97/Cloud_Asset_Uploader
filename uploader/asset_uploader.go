@@ -2,6 +2,7 @@ package uploader
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"time"
 
 	"CloudAssetUploader/constants"
@@ -14,7 +15,7 @@ import (
 
 //
 type Uploader interface {
-	GetSignedUploadURL(assetName string) (url string, err error)
+	GetSignedUploadURL() (awsName, url string, err error)
 	GetSignedDownloadURL(assetName string, timeout int) (url string, er error)
 }
 
@@ -34,23 +35,20 @@ func (err *ErrorInvalidAssetName) Error() string {
 }
 
 //
-func (upld *AwsAssetUploader) GetSignedUploadURL(assetName string) (string, error) {
-	assetName, err := validateAssetName(assetName)
-	if err != nil {
-		return "", err
-	}
+func (upld *AwsAssetUploader) GetSignedUploadURL() (string, string, error) {
+	awsName := uuid.New().String()
 
 	resp, _ := upld.S3Manager.PutObjectRequest(&s3.PutObjectInput{
 		Bucket: aws.String(constants.DEFAULT_BUCKET_NAME),
-		Key:    aws.String(assetName),
+		Key:    aws.String(awsName),
 	})
 
-	url, err := resp.Presign(3 * time.Minute)
+	url, err := resp.Presign(60 * time.Minute)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return url, nil
+	return awsName, url, nil
 }
 
 //
@@ -66,11 +64,4 @@ func (upld *AwsAssetUploader) GetSignedDownloadURL(assetName string, timeout int
 		return "", err
 	}
 	return url, nil
-}
-
-func validateAssetName(name string) (string, error) {
-	if len(name) < constants.AssetMinNameLength || len(name) > constants.AssetMaxNameLength {
-		return name, &ErrorInvalidAssetName{Name: name}
-	}
-	return name, nil
 }
