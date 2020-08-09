@@ -2,7 +2,7 @@
 
 # Project description:
 This is a simple RESTful web service that
-can be used to upload assets to AWS S3 on the behalf of the person who started it. To that it issues presigned upload and download URLs that expire after a given period specified in seconds by the API caller.
+can be used to upload assets to AWS S3 on the behalf of the person who started it. To do that it issues presigned upload and download URLs that expire after a given period specified in seconds by the API caller.
 
 # Architecture:
 This is a simple service written in GoLang that uses MongoDB to store the applications state.
@@ -10,7 +10,7 @@ I tried to come up with a stateless architecture, but could not due to the fact 
 to be generated (and in practice linked to) the asset before it is actually uploaded. The API is 100% covered by unit tests and the data layer is covered with integration tests.
 
 # Prerequisites and Gotchas
-One has to setup AWS credentials file as described in [the official documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html.).
+One has to setup AWS credentials file as described in [the official documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html).
 To start the service locally run
 `docker-compose up --build` (--build is not required after the first time if you have not made any changes to the code)
 ### Warning: DO NOT upload the resulting docker image to any public docker repository as you risk leaking your AWS credentials and allowing other people to use S3 on your behalf.
