@@ -29,8 +29,8 @@ const (
 	AssetStatusCreated  = "CREATED"
 	AssetStatusUploaded = "UPLOADED"
 
-	AssetMinNameLength  = 1
-	AssetMaxNameLength  = 37
+	AssetMinNameLength = 1
+	AssetMaxNameLength = 37
 
 	MinimumURLExpiryTimeInSeconds = 1
 	MaximumURLExpiryTimeInSeconds = 3600

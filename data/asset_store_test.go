@@ -124,9 +124,9 @@ func tearDown() {
 		log.Error().Msg("Could not unset all MongoDB env vars properly. Please unset manually.")
 	}
 
-/*	assetInfoCollection := db.Client.Database(constants.AssetUploaderDatabaseName).Collection(constants.AssetUploaderCollectionName)
+	assetInfoCollection := db.Client.Database(constants.AssetUploaderDatabaseName).Collection(constants.AssetUploaderCollectionName)
 	err = assetInfoCollection.Drop(context.Background())
 	if err != nil {
 		log.Error().Msg("Could not drop database after tests.")
-	}*/
+	}
 }

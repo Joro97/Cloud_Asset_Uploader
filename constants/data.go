@@ -13,4 +13,5 @@ const (
 	MockURL              = "aws.signed.url.should.be.here"
 	InvalidStatus        = "Theseus"
 	MockInvalidAssetName = "ThisIsTooLongNameForAnS3AssetAndShouldThrowAnError"
+	UploadImagePath      = "cassandra.jpeg"
 )
