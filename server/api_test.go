@@ -14,8 +14,6 @@ import (
 	"CloudAssetUploader/data"
 	"CloudAssetUploader/responses"
 	"CloudAssetUploader/test"
-	"CloudAssetUploader/uploader"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -42,29 +40,6 @@ func TestRequestUploadURLWithOkRequestShouldReturnProperResponse(t *testing.T) {
 	require.NoError(t, json.Unmarshal(buf, uploadResp))
 	assert.Equal(t, constants.MockID, uploadResp.ID)
 	assert.Equal(t, constants.MockURL, uploadResp.URL)
-}
-
-func TestRequestUploadURLWithInvalidNameShouldThrowProperError(t *testing.T) {
-	rec := httptest.NewRecorder()
-	req, err := http.NewRequest(constants.RequestMethodPost,
-		fmt.Sprintf("%s?name=%s", constants.AssetsURL, constants.MockInvalidAssetName), nil)
-	require.NoError(t, err)
-
-	db := &test.MockDb{}
-	upd := &test.MockUploader{Err: &uploader.ErrorInvalidAssetName{Name: constants.MockInvalidAssetName}}
-	env := &config.Env{AssetUploader: upd, Store: db}
-
-	RequestUploadURL(env).ServeHTTP(rec, req)
-
-	assert.Equal(t, http.StatusBadRequest, rec.Code)
-	buf, err := ioutil.ReadAll(rec.Body)
-	require.NoError(t, err)
-
-	contentType := rec.Header().Get(constants.HeaderContentType)
-	assert.Equal(t, constants.ApplicationJSON, contentType)
-
-	respMsg := ""
-	require.NoError(t, json.Unmarshal(buf, &respMsg))
 }
 
 func TestRequestUploadURLWithInternalErrorOnGetSignedUploadURLShouldThrowProperError(t *testing.T) {
