@@ -17,8 +17,13 @@ import (
 )
 
 func main() {
+	awsRegion := os.Getenv("AWS_REGION")
+	if awsRegion == "" {
+		awsRegion = constants.DefaultRegion
+	}
+
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(constants.Region),
+		Region: aws.String(awsRegion),
 	})
 	if err != nil {
 		log.Fatal().Msgf("Could not connect to aws: %s", err)
