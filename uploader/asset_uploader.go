@@ -1,7 +1,6 @@
 package uploader
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
@@ -14,34 +13,25 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-//
+// Uploader is an interface for interacting with underlying cloud where the assets will be stored.
 type Uploader interface {
 	GetSignedUploadURL(timeout string) (awsName, url string, err error)
 	GetSignedDownloadURL(assetName, timeout string) (url string, er error)
 }
 
-//
+// AwsAssetUploader is an Uploader for AWS.
 type AwsAssetUploader struct {
 	AWSClient *session.Session
 	S3Manager *s3.S3
 }
 
-type ErrorInvalidAssetName struct {
-	Name string
-}
-
-func (err *ErrorInvalidAssetName) Error() string {
-	return fmt.Sprintf("The asset name should be between %d and %d characters long. Current name: %s",
-		constants.AssetMinNameLength, constants.AssetMaxNameLength, err.Name)
-}
-
-//
+// GetSignedUploadURL creates a presigned URL for uploading an asset to AWS. The URL expiry is specified by timeout.
 func (upld *AwsAssetUploader) GetSignedUploadURL(timeout string) (string, string, error) {
 	secondsTimeout := validateTimeout(timeout)
 	awsName := uuid.New().String()
 
 	resp, _ := upld.S3Manager.PutObjectRequest(&s3.PutObjectInput{
-		Bucket: aws.String(constants.DEFAULT_BUCKET_NAME),
+		Bucket: aws.String(constants.DefaultBucketName),
 		Key:    aws.String(awsName),
 	})
 
@@ -53,12 +43,12 @@ func (upld *AwsAssetUploader) GetSignedUploadURL(timeout string) (string, string
 	return awsName, url, nil
 }
 
-//
+// GetSignedDownloadURL creates a presigned URL for downloading a currently existing asset it AWS. URL expiry is specified by the timeout param.
 func (upld *AwsAssetUploader) GetSignedDownloadURL(assetName, timeout string) (string, error) {
 	secondsTimeout := validateTimeout(timeout)
 
 	resp, _ := upld.S3Manager.GetObjectRequest(&s3.GetObjectInput{
-		Bucket: aws.String(constants.DEFAULT_BUCKET_NAME),
+		Bucket: aws.String(constants.DefaultBucketName),
 		Key:    aws.String(assetName),
 	})
 

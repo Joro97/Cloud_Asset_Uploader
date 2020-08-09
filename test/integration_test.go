@@ -39,7 +39,7 @@ func setUp() {
 	setLocalhostEnvVars()
 
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(constants.REGION),
+		Region: aws.String(constants.Region),
 	})
 	if err != nil {
 		log.Fatal().Msgf("Could not connect to aws: %s", err)
@@ -83,7 +83,7 @@ func TestAPIFlows(t *testing.T) {
 	require.NoError(t, err)
 	validateContentType(t, rec)
 
-	uploadResp := &responses.UploadUrlResponse{}
+	uploadResp := &responses.UploadURLResponse{}
 	require.NoError(t, json.Unmarshal(buf, uploadResp))
 
 	// Now make a PUT request to upload an asset to AWS
@@ -91,7 +91,7 @@ func TestAPIFlows(t *testing.T) {
 	require.NoError(t, err)
 	//body, err := json.Marshal(buf)
 
-	awsUploadReq, err := http.NewRequest(constants.RequestMethodPut, uploadResp.Url, upldFile)
+	awsUploadReq, err := http.NewRequest(constants.RequestMethodPut, uploadResp.URL, upldFile)
 	require.NoError(t, err)
 
 	awsResp, err := httpClient.Do(awsUploadReq)
@@ -102,7 +102,7 @@ func TestAPIFlows(t *testing.T) {
 	// Set the status of the asset to uploaded
 	statusRec := httptest.NewRecorder()
 	statusReq, err := http.NewRequest(constants.RequestMethodPut,
-		fmt.Sprintf("%s?id=%s&status=%s", constants.StatusURL, uploadResp.Id, constants.AssetStatusUploaded), nil)
+		fmt.Sprintf("%s?id=%s&status=%s", constants.StatusURL, uploadResp.ID, constants.AssetStatusUploaded), nil)
 	require.NoError(t, err)
 
 	server.SetUploadStatus(env).ServeHTTP(statusRec, statusReq)
@@ -114,13 +114,13 @@ func TestAPIFlows(t *testing.T) {
 
 	statusResp := &responses.StatusUpdateResponse{}
 	require.NoError(t, json.Unmarshal(buf, statusResp))
-	assert.Equal(t, uploadResp.Id, statusResp.Id)
+	assert.Equal(t, uploadResp.ID, statusResp.ID)
 	assert.Equal(t, constants.AssetStatusUploaded, statusResp.Status)
 
 	// Make a request for a download URL for the uploaded asset
 	downloadRec := httptest.NewRecorder()
 	downloadReq, err := http.NewRequest(constants.RequestMethodGet,
-		fmt.Sprintf("%s?id=%s", constants.AssetsURL, uploadResp.Id), nil)
+		fmt.Sprintf("%s?id=%s", constants.AssetsURL, uploadResp.ID), nil)
 	require.NoError(t, err)
 
 	server.GetDownloadURL(env).ServeHTTP(downloadRec, downloadReq)
@@ -130,13 +130,13 @@ func TestAPIFlows(t *testing.T) {
 	require.NoError(t, err)
 	validateContentType(t, downloadRec)
 
-	downloadResp := &responses.DownloadUrlResponse{}
+	downloadResp := &responses.DownloadURLResponse{}
 	require.NoError(t, json.Unmarshal(buf, downloadResp))
-	assert.Equal(t, uploadResp.Id, downloadResp.Id)
-	assert.Equal(t, statusResp.Id, downloadResp.Id)
+	assert.Equal(t, uploadResp.ID, downloadResp.ID)
+	assert.Equal(t, statusResp.ID, downloadResp.ID)
 
 	// Actually download the file from AWS
-	awsDownloadResp, err := http.Get(downloadResp.DownloadUrl)
+	awsDownloadResp, err := http.Get(downloadResp.DownloadURL)
 	require.NoError(t, err)
 
 	// TODO: Compare this to actual uploaded file!!

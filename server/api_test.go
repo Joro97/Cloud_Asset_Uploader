@@ -38,10 +38,10 @@ func TestRequestUploadURLWithOkRequestShouldReturnProperResponse(t *testing.T) {
 	contentType := rec.Header().Get(constants.HeaderContentType)
 	assert.Equal(t, constants.ApplicationJSON, contentType)
 
-	uploadResp := &responses.UploadUrlResponse{}
+	uploadResp := &responses.UploadURLResponse{}
 	require.NoError(t, json.Unmarshal(buf, uploadResp))
-	assert.Equal(t, constants.MockID, uploadResp.Id)
-	assert.Equal(t, constants.MockURL, uploadResp.Url)
+	assert.Equal(t, constants.MockID, uploadResp.ID)
+	assert.Equal(t, constants.MockURL, uploadResp.URL)
 }
 
 func TestRequestUploadURLWithInvalidNameShouldThrowProperError(t *testing.T) {
@@ -157,14 +157,14 @@ func TestSetUploadStatusWithOkRequestShouldReturnProperResponse(t *testing.T) {
 
 	resp := &responses.StatusUpdateResponse{}
 	require.NoError(t, json.Unmarshal(buf, resp))
-	assert.Equal(t, constants.MockID, resp.Id)
+	assert.Equal(t, constants.MockID, resp.ID)
 	assert.Equal(t, constants.AssetStatusUploaded, resp.Status)
 }
 
 func TestSetUploadStatusWithNonExistentAssetIDShouldReturnProperError(t *testing.T) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest(constants.RequestMethodPut,
-		fmt.Sprintf("%s?id=%s", constants.StatusURL, constants.MockNonExistentId), nil)
+		fmt.Sprintf("%s?id=%s", constants.StatusURL, constants.MockNonExistentID), nil)
 	require.NoError(t, err)
 
 	db := &test.MockDb{Err: &data.ErrorNoAssetFound{}}
@@ -182,7 +182,7 @@ func TestSetUploadStatusWithNonExistentAssetIDShouldReturnProperError(t *testing
 func TestSetUploadStatusWithInvalidStatusIDShouldReturnProperError(t *testing.T) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest(constants.RequestMethodPut,
-		fmt.Sprintf("%s?id=%s", constants.StatusURL, constants.MockNonExistentId), nil)
+		fmt.Sprintf("%s?id=%s", constants.StatusURL, constants.MockNonExistentID), nil)
 	require.NoError(t, err)
 
 	db := &test.MockDb{Err: &data.ErrorInvalidStatus{}}
@@ -200,7 +200,7 @@ func TestSetUploadStatusWithInvalidStatusIDShouldReturnProperError(t *testing.T)
 func TestSetUploadStatusWithErrorInSetAssetStatusShouldReturnProperError(t *testing.T) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest(constants.RequestMethodPut,
-		fmt.Sprintf("%s?id=%s", constants.StatusURL, constants.MockNonExistentId), nil)
+		fmt.Sprintf("%s?id=%s", constants.StatusURL, constants.MockNonExistentID), nil)
 	require.NoError(t, err)
 
 	db := &test.MockDb{Err: errors.New("this should throw and internal server error for the test")}
@@ -240,10 +240,10 @@ func TestGetDownloadURLWithOkRequestShouldReturnProperResponse(t *testing.T) {
 	contentType := rec.Header().Get(constants.HeaderContentType)
 	assert.Equal(t, constants.ApplicationJSON, contentType)
 
-	resp := &responses.DownloadUrlResponse{}
+	resp := &responses.DownloadURLResponse{}
 	assert.NoError(t, json.Unmarshal(buf, resp))
-	assert.Equal(t, constants.MockID, resp.Id)
-	assert.Equal(t, constants.MockURL, resp.DownloadUrl)
+	assert.Equal(t, constants.MockID, resp.ID)
+	assert.Equal(t, constants.MockURL, resp.DownloadURL)
 }
 
 func TestGetDownloadURLWithOkTimeoutShouldReturnProperResponse(t *testing.T) {
@@ -265,10 +265,10 @@ func TestGetDownloadURLWithOkTimeoutShouldReturnProperResponse(t *testing.T) {
 	contentType := rec.Header().Get(constants.HeaderContentType)
 	assert.Equal(t, constants.ApplicationJSON, contentType)
 
-	resp := &responses.DownloadUrlResponse{}
+	resp := &responses.DownloadURLResponse{}
 	assert.NoError(t, json.Unmarshal(buf, resp))
-	assert.Equal(t, constants.MockID, resp.Id)
-	assert.Equal(t, constants.MockURL, resp.DownloadUrl)
+	assert.Equal(t, constants.MockID, resp.ID)
+	assert.Equal(t, constants.MockURL, resp.DownloadURL)
 }
 
 func TestGetDownloadURLWithTooLargeTimeoutAndMissingAssetIDShouldReturnProperResponse(t *testing.T) {

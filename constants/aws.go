@@ -1,6 +1,7 @@
 package constants
 
+// AWS related constants.
 const (
-	REGION              = "eu-central-1"
-	DEFAULT_BUCKET_NAME = "joro-test-bucket"
+	Region            = "eu-central-1"
+	DefaultBucketName = "joro-test-bucket"
 )

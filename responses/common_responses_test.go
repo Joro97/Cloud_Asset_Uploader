@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	MockId  = "c0703c92-9161-4c6a-947a-77519bedaceb"
-	MockUrl = "aws.signed.url.should.be.here"
+	MockID  = "c0703c92-9161-4c6a-947a-77519bedaceb"
+	MockURL = "aws.signed.url.should.be.here"
 )
 
 func TestWriteBadRequestFunctionShouldWriteProperStatusCodeAndMessage(t *testing.T) {
@@ -58,9 +58,9 @@ func TestWWriteResourceNotFoundResponseFunctionShouldWriteProperStatusCodeAndMes
 }
 
 func TestWriteOkResponseFunctionShouldWriteProperStatusCodeAndMessage(t *testing.T) {
-	mockResp := &UploadUrlResponse{
-		Id:  MockId,
-		Url: MockUrl,
+	mockResp := &UploadURLResponse{
+		ID:  MockID,
+		URL: MockURL,
 	}
 	rec := httptest.NewRecorder()
 
@@ -69,8 +69,8 @@ func TestWriteOkResponseFunctionShouldWriteProperStatusCodeAndMessage(t *testing
 
 	buf, err := ioutil.ReadAll(rec.Body)
 	require.NoError(t, err)
-	resp := &UploadUrlResponse{}
+	resp := &UploadURLResponse{}
 	require.NoError(t, json.Unmarshal(buf, resp))
-	assert.Equal(t, mockResp.Id, resp.Id)
-	assert.Equal(t, mockResp.Url, resp.Url)
+	assert.Equal(t, mockResp.ID, resp.ID)
+	assert.Equal(t, mockResp.URL, resp.URL)
 }

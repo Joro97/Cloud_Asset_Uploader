@@ -7,9 +7,9 @@ import (
 	"CloudAssetUploader/constants"
 	"CloudAssetUploader/data"
 	"CloudAssetUploader/responses"
-	"CloudAssetUploader/uploader"
 )
 
+// RequestUploadURL is a handler for the /assets POST API endpoint. It uses dependency injection to allow for more robust testing.
 func RequestUploadURL(env *config.Env) http.HandlerFunc {
 	return func(wr http.ResponseWriter, r *http.Request) {
 		wr.Header().Set(constants.HeaderContentType, constants.ApplicationJSON)
@@ -18,12 +18,7 @@ func RequestUploadURL(env *config.Env) http.HandlerFunc {
 
 		awsName, url, err := env.AssetUploader.GetSignedUploadURL(timeout)
 		if err != nil {
-			switch err.(type) {
-			case *uploader.ErrorInvalidAssetName:
-				responses.WriteBadRequest(wr, err.Error())
-			default:
-				responses.WriteInternalServerErrorResponse(wr, constants.InternalServerErrorMessage)
-			}
+			responses.WriteInternalServerErrorResponse(wr, constants.InternalServerErrorMessage)
 			return
 		}
 
@@ -33,22 +28,23 @@ func RequestUploadURL(env *config.Env) http.HandlerFunc {
 			return
 		}
 
-		resp := &responses.UploadUrlResponse{
-			Id:  id,
-			Url: url,
+		resp := &responses.UploadURLResponse{
+			ID:  id,
+			URL: url,
 		}
 		responses.WriteOkResponse(wr, resp)
 	}
 }
 
+// SetUploadStatus is a handler for the /status PUT API endpoint. It uses dependency injection to allow for more robust testing.
 func SetUploadStatus(env *config.Env) http.HandlerFunc {
 	return func(wr http.ResponseWriter, r *http.Request) {
 		wr.Header().Set(constants.HeaderContentType, constants.ApplicationJSON)
 
-		assetId := r.URL.Query().Get("id")
+		assetID := r.URL.Query().Get("id")
 		status := r.URL.Query().Get("status")
 
-		asset, err := env.Store.SetAssetStatus(assetId, status)
+		asset, err := env.Store.SetAssetStatus(assetID, status)
 		if err != nil {
 			switch err.(type) {
 			case *data.ErrorNoAssetFound:
@@ -62,13 +58,14 @@ func SetUploadStatus(env *config.Env) http.HandlerFunc {
 		}
 
 		resp := responses.StatusUpdateResponse{
-			Id:     asset.Name,
+			ID:     asset.Name,
 			Status: asset.UploadStatus,
 		}
 		responses.WriteOkResponse(wr, resp)
 	}
 }
 
+// GetDownloadURL is a handler for the /assets GET API endpoint. It uses dependency injection to allow for more robust testing.
 func GetDownloadURL(env *config.Env) http.HandlerFunc {
 	return func(wr http.ResponseWriter, r *http.Request) {
 		wr.Header().Set(constants.HeaderContentType, constants.ApplicationJSON)
@@ -97,9 +94,9 @@ func GetDownloadURL(env *config.Env) http.HandlerFunc {
 			return
 		}
 
-		resp := &responses.DownloadUrlResponse{
-			Id:          id,
-			DownloadUrl: url,
+		resp := &responses.DownloadURLResponse{
+			ID:          id,
+			DownloadURL: url,
 		}
 		responses.WriteOkResponse(wr, resp)
 	}

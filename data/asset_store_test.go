@@ -91,7 +91,7 @@ func TestIntegrationSetAssetStatusShouldReturnProperErrorWithInvalidStatus(t *te
 }
 
 func TestIntegrationSetAssetStatusShouldReturnProperErrorWithNonExistentAssetId(t *testing.T) {
-	_, err := db.SetAssetStatus(constants.MockNonExistentId, constants.AssetStatusUploaded)
+	_, err := db.SetAssetStatus(constants.MockNonExistentID, constants.AssetStatusUploaded)
 	require.Error(t, err)
 }
 
@@ -108,7 +108,7 @@ func TestIntegrationGetAssetShouldReturnProperErrorWhenNonExistentIdProvided(t *
 	_, err := db.AddNewAsset(constants.MockID, constants.MockURL)
 	require.NoError(t, err)
 
-	asset, err := db.GetAsset(constants.MockNonExistentId)
+	asset, err := db.GetAsset(constants.MockNonExistentID)
 	require.Error(t, err)
 	assert.Nil(t, asset)
 }

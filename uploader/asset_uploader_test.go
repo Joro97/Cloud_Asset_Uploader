@@ -26,7 +26,7 @@ func TestMain(m *testing.M) {
 
 func setUp() {
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(constants.REGION),
+		Region: aws.String(constants.Region),
 	})
 	if err != nil {
 		log.Fatal().Msgf("Could not connect to aws: %s", err)

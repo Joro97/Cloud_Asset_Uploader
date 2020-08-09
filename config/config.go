@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-// The environment required for the application.
+// Env hold the environment required for the application.
 type Env struct {
 	AssetUploader uploader.Uploader
 	Store         data.Store

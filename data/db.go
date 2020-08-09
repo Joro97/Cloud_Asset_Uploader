@@ -13,14 +13,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-//
+// Store is an interface for interacting with the applications storage.
 type Store interface {
 	AddNewAsset(assetName, url string) (id string, err error)
-	SetAssetStatus(assetId, status string) (*AssetInfo, error)
-	GetAsset(assetId string) (*AssetInfo, error)
+	SetAssetStatus(assetID, status string) (*AssetInfo, error)
+	GetAsset(assetID string) (*AssetInfo, error)
 }
 
-//
+// DB is a Store implementation, whose underlying DB is MongoDB.
 type DB struct {
 	Client *mongo.Client
 }

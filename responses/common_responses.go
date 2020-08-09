@@ -5,19 +5,22 @@ import (
 	"net/http"
 )
 
-type UploadUrlResponse struct {
-	Id  string `json:"asset_id,omitempty"`
-	Url string `json:"url,omitempty"`
+// UploadURLResponse represents a response for a upload URL request.
+type UploadURLResponse struct {
+	ID  string `json:"asset_id,omitempty"`
+	URL string `json:"url,omitempty"`
 }
 
+// StatusUpdateResponse represents a response for a status update request.
 type StatusUpdateResponse struct {
-	Id     string `json:"id,omitempty"`
+	ID     string `json:"id,omitempty"`
 	Status string `json:"status"`
 }
 
-type DownloadUrlResponse struct {
-	Id          string `json:"id,omitempty"`
-	DownloadUrl string `json:"downloadUrl"`
+// DownloadURLResponse represents a response for a download URL request.
+type DownloadURLResponse struct {
+	ID          string `json:"id,omitempty"`
+	DownloadURL string `json:"downloadUrl"`
 }
 
 // WriteBadRequest writes StatusBadRequest response and the given message to the given ResponseWriter.
