@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	"CloudAssetUploader/config"
 	"CloudAssetUploader/constants"
@@ -145,6 +146,40 @@ func TestAPIFlows(t *testing.T) {
 	awsDownloadResp, err := http.Get(downloadResp.DownloadURL)
 	require.NoError(t, err)
 	assert.Equal(t, http.StatusOK, awsDownloadResp.StatusCode)
+
+	expUpldResp := getUploadURLResponse(env, t, "2")
+	time.Sleep(2 * time.Second)
+
+	// Now make a PUT request to upload an asset to AWS after the expiry time has passed.
+	upldFile, err = getUploadBytes()
+	require.NoError(t, err)
+
+	awsExpUploadReq, err := http.NewRequest(constants.RequestMethodPut, expUpldResp.URL, bytes.NewBuffer(upldFile))
+	require.NoError(t, err)
+
+	awsExpResp, err := httpClient.Do(awsExpUploadReq)
+	require.NoError(t, err)
+
+	assert.Equal(t, http.StatusForbidden, awsExpResp.StatusCode)
+}
+
+func getUploadURLResponse(env *config.Env, t *testing.T, timeout string) *responses.UploadURLResponse {
+	// Check that upload URL actually expires after the specified timeout
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest(constants.RequestMethodPost,
+		fmt.Sprintf("%s?timeout=%s", constants.AssetsURL, timeout), nil)
+	require.NoError(t, err)
+
+	server.RequestUploadURL(env).ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusOK, rec.Code)
+	buf, err := ioutil.ReadAll(rec.Body)
+	require.NoError(t, err)
+	validateContentType(t, rec)
+
+	resp := &responses.UploadURLResponse{}
+	require.NoError(t, json.Unmarshal(buf, resp))
+	return resp
 }
 
 func validateContentType(t *testing.T, rec *httptest.ResponseRecorder) {
