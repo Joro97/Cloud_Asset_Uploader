@@ -41,6 +41,10 @@ func main() {
 	defer db.Client.Disconnect(context.Background())
 
 	env := config.NewEnv(sess, db)
+	err = env.AssetUploader.SetupBucket()
+	if err != nil {
+		log.Fatal().Msgf("Could not set the AWS bucket. Err: %s", err)
+	}
 
 	r := chi.NewRouter()
 

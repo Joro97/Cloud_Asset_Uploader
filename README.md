@@ -11,8 +11,11 @@ to be generated (and in practice linked to) the asset before it is actually uplo
 
 # Prerequisites and Gotchas
 One has to setup AWS credentials file as described in [the official documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html).
-To start the service locally run
-`docker-compose up --build` (--build is not required after the first time if you have not made any changes to the code)
+To start the service locally run: <br/>
+`docker-compose up --build` (--build is not required after the first time if you have not made any changes to the code). <br/>The docker-compose file contains all the required ENV vars for the service. Those are ENV vars for configurable connection for MongoDB, the port of the server and some AWS config. The application
+provides default values for the server and AWS vars, but the MongoDB ones have to be set in order to connect successfully. The provided compose file has them all set up, so it can be used as is.
+To stop the service run: <br/>
+`docker-compose down`
 ### Warning: DO NOT upload the resulting docker image to any public docker repository as you risk leaking your AWS credentials and allowing other people to use S3 on your behalf.
 
 ## Useful commands:

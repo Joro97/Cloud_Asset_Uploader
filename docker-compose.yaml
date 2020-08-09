@@ -12,6 +12,7 @@ services:
       - MONGO_PORT=27017
       - SERVER_PORT=:8090
       - AWS_REGION=eu-central-1
+      - AWS_BUCKET_NAME=cloud-assets-uploader
     volumes:
       - ~/.aws/:/root/.aws:ro
     ports:
