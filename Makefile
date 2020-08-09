@@ -14,6 +14,6 @@ integration:
     go tool cover -html=cover.out -o cover.html && \
     open cover.html
 
-unit-test:
+unit:
 	go test -v ./server && \
 	go test -v ./responses
