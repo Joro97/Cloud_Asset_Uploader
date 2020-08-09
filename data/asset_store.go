@@ -87,6 +87,9 @@ func (db *DB) SetAssetStatus(awsName, status string) (*AssetInfo, error) {
 	if err == mongo.ErrNoDocuments {
 		return nil, &ErrorNoAssetFound{Id: awsName}
 	}
+	if err != nil {
+		return nil, err
+	}
 
 	return asset, err
 }

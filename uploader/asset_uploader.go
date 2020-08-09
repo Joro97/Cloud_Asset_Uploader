@@ -2,7 +2,7 @@ package uploader
 
 import (
 	"fmt"
-	"github.com/google/uuid"
+	"strconv"
 	"time"
 
 	"CloudAssetUploader/constants"
@@ -10,13 +10,14 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 )
 
 //
 type Uploader interface {
-	GetSignedUploadURL() (awsName, url string, err error)
-	GetSignedDownloadURL(assetName string, timeout int) (url string, er error)
+	GetSignedUploadURL(timeout string) (awsName, url string, err error)
+	GetSignedDownloadURL(assetName, timeout string) (url string, er error)
 }
 
 //
@@ -35,7 +36,8 @@ func (err *ErrorInvalidAssetName) Error() string {
 }
 
 //
-func (upld *AwsAssetUploader) GetSignedUploadURL() (string, string, error) {
+func (upld *AwsAssetUploader) GetSignedUploadURL(timeout string) (string, string, error) {
+	secondsTimeout := validateTimeout(timeout)
 	awsName := uuid.New().String()
 
 	resp, _ := upld.S3Manager.PutObjectRequest(&s3.PutObjectInput{
@@ -43,7 +45,7 @@ func (upld *AwsAssetUploader) GetSignedUploadURL() (string, string, error) {
 		Key:    aws.String(awsName),
 	})
 
-	url, err := resp.Presign(60 * time.Minute)
+	url, err := resp.Presign(time.Duration(secondsTimeout) * time.Second)
 	if err != nil {
 		return "", "", err
 	}
@@ -52,16 +54,29 @@ func (upld *AwsAssetUploader) GetSignedUploadURL() (string, string, error) {
 }
 
 //
-func (upld *AwsAssetUploader) GetSignedDownloadURL(assetName string, timeout int) (string, error) {
+func (upld *AwsAssetUploader) GetSignedDownloadURL(assetName, timeout string) (string, error) {
+	secondsTimeout := validateTimeout(timeout)
+
 	resp, _ := upld.S3Manager.GetObjectRequest(&s3.GetObjectInput{
 		Bucket: aws.String(constants.DEFAULT_BUCKET_NAME),
 		Key:    aws.String(assetName),
 	})
 
-	url, err := resp.Presign(time.Duration(timeout) * time.Second)
+	url, err := resp.Presign(time.Duration(secondsTimeout) * time.Second)
 	if err != nil {
 		log.Error().Msgf("Could not create a download URL for given object. Err: %s", err)
 		return "", err
 	}
 	return url, nil
+}
+
+func validateTimeout(timeout string) int {
+	timeoutSeconds := constants.DefaultURLExpiryTimeInSeconds
+	if val, err := strconv.Atoi(timeout); err == nil {
+		if val < constants.MinimumURLExpiryTimeInSeconds || val > constants.MaximumURLExpiryTimeInSeconds {
+			val = constants.DefaultURLExpiryTimeInSeconds
+		}
+		timeoutSeconds = val
+	}
+	return timeoutSeconds
 }

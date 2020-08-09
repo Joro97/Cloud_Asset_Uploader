@@ -2,7 +2,6 @@ package server
 
 import (
 	"net/http"
-	"strconv"
 
 	"CloudAssetUploader/config"
 	"CloudAssetUploader/constants"
@@ -15,7 +14,9 @@ func RequestUploadURL(env *config.Env) http.HandlerFunc {
 	return func(wr http.ResponseWriter, r *http.Request) {
 		wr.Header().Set(constants.HeaderContentType, constants.ApplicationJSON)
 
-		awsName, url, err := env.AssetUploader.GetSignedUploadURL()
+		timeout := r.URL.Query().Get("timeout")
+
+		awsName, url, err := env.AssetUploader.GetSignedUploadURL(timeout)
 		if err != nil {
 			switch err.(type) {
 			case *uploader.ErrorInvalidAssetName:
@@ -74,13 +75,6 @@ func GetDownloadURL(env *config.Env) http.HandlerFunc {
 
 		id := r.URL.Query().Get("id")
 		timeout := r.URL.Query().Get("timeout")
-		intTimeout := 60
-		if val, err := strconv.Atoi(timeout); err == nil {
-			if val < 0 || val > 3600 {
-				val = 60
-			}
-			intTimeout = val
-		}
 
 		asset, err := env.Store.GetAsset(id)
 		if err != nil {
@@ -97,7 +91,7 @@ func GetDownloadURL(env *config.Env) http.HandlerFunc {
 			return
 		}
 
-		url, err := env.AssetUploader.GetSignedDownloadURL(asset.Name, intTimeout)
+		url, err := env.AssetUploader.GetSignedDownloadURL(asset.Name, timeout)
 		if err != nil {
 			responses.WriteInternalServerErrorResponse(wr, constants.InternalServerErrorMessage)
 			return

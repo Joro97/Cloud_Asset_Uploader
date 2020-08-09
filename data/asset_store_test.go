@@ -71,8 +71,46 @@ func TestIntegrationNewDBReturnsAnErrorForInvalidConnectionString(t *testing.T) 
 }
 
 func TestIntegrationAddNewAssetAddsAssetWithProperNameAndUrl(t *testing.T) {
-	_, err := db.AddNewAsset(constants.MockAssetName, constants.MockURL)
+	_, err := db.AddNewAsset(constants.MockID, constants.MockURL)
 	require.NoError(t, err)
+}
+
+func TestIntegrationSetAssetStatusShouldReturnProperAssetWithValidIdAndStatus(t *testing.T) {
+	_, err := db.AddNewAsset(constants.MockID, constants.MockURL)
+	require.NoError(t, err)
+
+	asset, err := db.SetAssetStatus(constants.MockID, constants.AssetStatusUploaded)
+	require.NoError(t, err)
+	assert.Equal(t, constants.MockID, asset.Name)
+	assert.Equal(t, constants.AssetStatusUploaded, asset.UploadStatus)
+}
+
+func TestIntegrationSetAssetStatusShouldReturnProperErrorWithInvalidStatus(t *testing.T) {
+	_, err := db.SetAssetStatus(constants.MockID, constants.InvalidStatus)
+	require.Error(t, err)
+}
+
+func TestIntegrationSetAssetStatusShouldReturnProperErrorWithNonExistentAssetId(t *testing.T) {
+	_, err := db.SetAssetStatus(constants.MockNonExistentId, constants.AssetStatusUploaded)
+	require.Error(t, err)
+}
+
+func TestIntegrationGetAssetShouldReturnProperAssetWhenValidId(t *testing.T) {
+	_, err := db.AddNewAsset(constants.MockID, constants.MockURL)
+	require.NoError(t, err)
+
+	asset, err := db.GetAsset(constants.MockID)
+	require.NoError(t, err)
+	assert.Equal(t, constants.MockID, asset.Name)
+}
+
+func TestIntegrationGetAssetShouldReturnProperErrorWhenNonExistentIdProvided(t *testing.T) {
+	_, err := db.AddNewAsset(constants.MockID, constants.MockURL)
+	require.NoError(t, err)
+
+	asset, err := db.GetAsset(constants.MockNonExistentId)
+	require.Error(t, err)
+	assert.Nil(t, asset)
 }
 
 func tearDown() {

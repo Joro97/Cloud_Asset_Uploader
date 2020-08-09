@@ -47,10 +47,10 @@ func (m *MockDb) GetAsset(assetId string) (*data.AssetInfo, error) {
 	}, m.Err
 }
 
-func (m *MockUploader) GetSignedUploadURL() (awsName, url string, err error) {
+func (m *MockUploader) GetSignedUploadURL(timeout string) (awsName, url string, err error) {
 	return constants.MockID, constants.MockURL, m.Err
 }
 
-func (m *MockUploader) GetSignedDownloadURL(assetName string, timeout int) (url string, er error) {
+func (m *MockUploader) GetSignedDownloadURL(assetName, timeout string) (url string, er error) {
 	return constants.MockURL, m.Err
 }

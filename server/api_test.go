@@ -22,7 +22,7 @@ import (
 
 func TestRequestUploadURLWithOkRequestShouldReturnProperResponse(t *testing.T) {
 	rec := httptest.NewRecorder()
-	req, err := http.NewRequest(constants.RequestMethodPost, fmt.Sprintf("%s?%s", constants.AssetsURL, constants.MockAssetName), nil)
+	req, err := http.NewRequest(constants.RequestMethodPost, fmt.Sprintf("%s", constants.AssetsURL), nil)
 	require.NoError(t, err)
 
 	db := &test.MockDb{}
@@ -69,8 +69,7 @@ func TestRequestUploadURLWithInvalidNameShouldThrowProperError(t *testing.T) {
 
 func TestRequestUploadURLWithInternalErrorOnGetSignedUploadURLShouldThrowProperError(t *testing.T) {
 	rec := httptest.NewRecorder()
-	req, err := http.NewRequest(constants.RequestMethodPost,
-		fmt.Sprintf("%s?name=%s", constants.AssetsURL, constants.MockAssetName), nil)
+	req, err := http.NewRequest(constants.RequestMethodPost, fmt.Sprintf("%s", constants.AssetsURL), nil)
 	require.NoError(t, err)
 
 	db := &test.MockDb{}
@@ -93,8 +92,7 @@ func TestRequestUploadURLWithInternalErrorOnGetSignedUploadURLShouldThrowProperE
 
 func TestRequestUploadURLWithInternalErrorOnAddNewAssetShouldThrowProperError(t *testing.T) {
 	rec := httptest.NewRecorder()
-	req, err := http.NewRequest(constants.RequestMethodPost,
-		fmt.Sprintf("%s?name=%s", constants.AssetsURL, constants.MockAssetName), nil)
+	req, err := http.NewRequest(constants.RequestMethodPost, fmt.Sprintf("%s", constants.AssetsURL), nil)
 	require.NoError(t, err)
 
 	db := &test.MockDb{Err: errors.New("this should be an internal server error")}
@@ -117,8 +115,7 @@ func TestRequestUploadURLWithInternalErrorOnAddNewAssetShouldThrowProperError(t 
 
 func TestRequestUploadURLWithOnAddNewAssetShouldThrowProperError(t *testing.T) {
 	rec := httptest.NewRecorder()
-	req, err := http.NewRequest(constants.RequestMethodPost,
-		fmt.Sprintf("%s?name=%s", constants.AssetsURL, constants.MockAssetName), nil)
+	req, err := http.NewRequest(constants.RequestMethodPost, fmt.Sprintf("%s", constants.AssetsURL), nil)
 	require.NoError(t, err)
 
 	db := &test.MockDb{Err: errors.New("this should be an internal server error")}
