@@ -10,7 +10,7 @@ I tried to come up with a stateless architecture, but could not due to the fact 
 to be generated (and in practice linked to) the asset before it is actually uploaded. The API is 100% covered by unit tests and the data layer is covered with integration tests.
 
 # Prerequisites and Gotchas
-One has to setup AWS credentials file as described in [the official documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). The provided docker-compose will mount your AWS credentials file into the container
+One has to setup AWS credentials file as described in [the official documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). The file has to be in "~/.aws/" directory and be named credentials, so the AWS SDK and the provided docker-compose can pick it up correctly. The provided docker-compose will mount your AWS credentials file into the container
 and the application in the container will use them to make calls to the AWS API through the SDK. 
 To start the service locally run: <br/>
 `docker-compose up --build` . Tested with docker-compose version 1.25.5. (--build is not required after the first time if you have not made any changes to the code). <br/>The docker-compose file contains all the required ENV vars for the service. Those are ENV vars for configurable connection for MongoDB, the port of the server and some AWS config. The application
