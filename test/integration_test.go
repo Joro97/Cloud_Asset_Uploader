@@ -147,10 +147,10 @@ func TestAPIFlows(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, http.StatusOK, awsDownloadResp.StatusCode)
 
+	// Now make a PUT request to upload an asset to AWS after the expiry time has passed.
 	expUpldResp := getUploadURLResponse(env, t, "2")
 	time.Sleep(2 * time.Second)
 
-	// Now make a PUT request to upload an asset to AWS after the expiry time has passed.
 	upldFile, err = getUploadBytes()
 	require.NoError(t, err)
 

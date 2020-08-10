@@ -5,12 +5,8 @@ LABEL maintainer="Georgi Karov"
 WORKDIR /app
 
 COPY . .
-COPY go.mod .
-COPY go.sum .
 
 RUN go mod download
-
-COPY . .
 
 # Build the Go app
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
