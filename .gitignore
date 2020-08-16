@@ -1,3 +1,7 @@
+# Clouad Astra config
+.astra
+.DS_store
+
 # Common IDEs
 .idea
 

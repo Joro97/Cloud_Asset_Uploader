@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"net/http"
 	"os"
 
@@ -29,16 +28,28 @@ func main() {
 		log.Fatal().Msgf("Could not connect to aws: %s", err)
 	}
 
-	connStr, err := data.BuildConnectionStringForDB()
-	if err != nil {
-		log.Fatal().Msgf("Could not build connection for MongoDB: %s", err)
-	}
+	/*	connStr, err := data.BuildConnectionStringForMongoDB()
+		if err != nil {
+			log.Fatal().Msgf("Could not build connection for MongoDB: %s", err)
+		}
 
-	db, err := data.NewDB(connStr)
+		db, err := data.NewDB(connStr)
+		if err != nil {
+			log.Fatal().Msgf("Could not connect to MongoDB: %s", err)
+		}
+		defer db.Client.Disconnect(context.Background())*/
+
+	// Messy code needs refactoring
+	astraSess, err := data.ConnectToAstra()
 	if err != nil {
-		log.Fatal().Msgf("Could not connect to MongoDB: %s", err)
+		log.Fatal().Msgf("Could not connect to Astra: %s", err)
 	}
-	defer db.Client.Disconnect(context.Background())
+	db := &data.AstraDB{Sess: astraSess}
+
+	err = db.InitializeTables()
+	if err != nil {
+		log.Fatal().Msgf("Could not initialize Astra table: %s", err)
+	}
 
 	env := config.NewEnv(sess, db)
 	err = env.AssetUploader.SetupBucket()

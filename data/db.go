@@ -25,8 +25,8 @@ type DB struct {
 	Client *mongo.Client
 }
 
-// BuildConnectionStringForDB builds a connection string from env vars or returns an error if one of them is missing.
-func BuildConnectionStringForDB() (string, error) {
+// BuildConnectionStringForMongoDB builds a connection string from env vars or returns an error if one of them is missing.
+func BuildConnectionStringForMongoDB() (string, error) {
 	mongoUser := os.Getenv("MONGO_USERNAME")
 	if mongoUser == "" {
 		return "", errors.New("no MongoDB username specified")

@@ -27,7 +27,7 @@ func TestMain(m *testing.M) {
 func setUp() {
 	setLocalhostEnvVars()
 
-	connStr, _ := BuildConnectionStringForDB()
+	connStr, _ := BuildConnectionStringForMongoDB()
 	database, _ := NewDB(connStr)
 	db = database
 }
@@ -45,22 +45,22 @@ func setLocalhostEnvVars() {
 
 func TestIntegrationBuildConnectionStringForDBReturnsErrorsForMissingEnvVars(t *testing.T) {
 	os.Unsetenv("MONGO_USERNAME")
-	_, err := BuildConnectionStringForDB()
+	_, err := BuildConnectionStringForMongoDB()
 	assert.Error(t, err)
 	os.Setenv("MONGO_USERNAME", "mongoadmin")
 
 	os.Unsetenv("MONGO_PASSWORD")
-	_, err = BuildConnectionStringForDB()
+	_, err = BuildConnectionStringForMongoDB()
 	assert.Error(t, err)
 	os.Setenv("MONGO_PASSWORD", "bigSecret")
 
 	os.Unsetenv("MONGO_CONTAINER_NAME")
-	_, err = BuildConnectionStringForDB()
+	_, err = BuildConnectionStringForMongoDB()
 	assert.Error(t, err)
 	os.Setenv("MONGO_CONTAINER_NAME", "localhost")
 
 	os.Unsetenv("MONGO_PORT")
-	_, err = BuildConnectionStringForDB()
+	_, err = BuildConnectionStringForMongoDB()
 	assert.Error(t, err)
 	os.Setenv("MONGO_PORT", "12345")
 }

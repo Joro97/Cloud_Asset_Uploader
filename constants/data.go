@@ -2,6 +2,7 @@ package constants
 
 // Database related constants.
 const (
+	AstraConfigDirectory        = "secure-connect"
 	AssetUploaderDatabaseName   = "assets"
 	AssetUploaderCollectionName = "assetsInfo"
 )

@@ -50,7 +50,7 @@ func setUp() {
 		log.Fatal().Msgf("Could not connect to aws: %s", err)
 	}
 
-	connStr, err := data.BuildConnectionStringForDB()
+	connStr, err := data.BuildConnectionStringForMongoDB()
 	if err != nil {
 		log.Fatal().Msgf("Could not build connection for MongoDB: %s", err)
 	}
